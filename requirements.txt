@@ -1,0 +1,10 @@
+
+# CSE499B frontend-only project
+# No Python packages are required to run the frontend.
+#
+# JavaScript dependencies are declared in package.json.
+# Install with:
+#   npm install
+#
+# The VideoLLaMA2 backend will have its own separate
+# Python requirements file when backend development begins.
