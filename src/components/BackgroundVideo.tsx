@@ -81,7 +81,6 @@ export default function BackgroundVideo() {
           <video
             ref={videoRef}
             src={DATASET_VIDEO}
-            autoPlay
             muted
             loop
             playsInline

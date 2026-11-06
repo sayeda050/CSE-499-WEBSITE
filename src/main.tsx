@@ -3,6 +3,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import App from "./App";
+import FrontendMotion from "./components/FrontendMotion";
 
 import "./styles/tokens.css";
 import "./styles/global.css";
@@ -21,5 +22,6 @@ if (!root) {
 createRoot(root).render(
   <StrictMode>
     <App />
+    <FrontendMotion />
   </StrictMode>,
 );
