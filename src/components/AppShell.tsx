@@ -1,6 +1,8 @@
-import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { Activity, ScanEye } from "lucide-react";
 import Navigation from "./Navigation";
+import LimeStream from "./LimeStream";
+import useGlassTilt from "../hooks/useGlassTilt";
 import "../styles/capstone-overview.css";
 import type { PageId } from "../types/inference";
 
@@ -17,31 +19,9 @@ const pageNames: Record<PageId, string> = {
   research: "Research evidence",
 };
 
-const routePaths = Array.from({ length: 7 }, (_, index) => {
-  const lane = index - 3;
-  return `M ${960 + lane * 10} 0
-    C ${952 + lane * 10} 125, ${855 + lane * 11} 182, ${497 + lane * 10} 300
-    S ${30 + lane * 12} 430, ${94 + lane * 12} 540
-    S ${785 + lane * 11} 675, ${911 + lane * 13} 807
-    S ${724 + lane * 15} 945, ${586 + lane * 16} 1000`;
-});
-
-function RouteStream() {
-  return (
-    <svg className="cv-page-stream cv-route-stream" viewBox="0 0 1000 1000"
-      preserveAspectRatio="none" aria-hidden="true" focusable="false">
-      {routePaths.map((path, index) => (
-        <g key={path} style={{ "--cv-lane": index } as CSSProperties}>
-          <path className="cv-page-stream-bed" d={path} pathLength="100" />
-          <path className="cv-page-stream-pulse" d={path} pathLength="100" />
-        </g>
-      ))}
-    </svg>
-  );
-}
-
 export default function AppShell({ children, page, onNavigate }: Props) {
   const content = useRef<HTMLElement>(null);
+  useGlassTilt(content, page);
 
   useEffect(() => {
     const main = content.current;
@@ -93,7 +73,7 @@ export default function AppShell({ children, page, onNavigate }: Props) {
           <strong>{pageNames[page]}</strong>
         </div>
         <main id="main-content" className="main-content" ref={content}>
-          {page !== "overview" && <RouteStream key={page} />}
+          <LimeStream variant="route" key={page} />
           {children}
         </main>
       </div>

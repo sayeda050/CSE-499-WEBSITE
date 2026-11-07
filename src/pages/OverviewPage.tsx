@@ -1,4 +1,4 @@
-import { useEffect, useRef, type CSSProperties } from "react";
+import { useEffect, useRef } from "react";
 import { ArrowRight, Camera, FileVideo, GitBranch } from "lucide-react";
 import "../styles/capstone-overview.css";
 import { BRANCHES, TASKS } from "../data/verifiedResearch";
@@ -10,51 +10,9 @@ interface Props {
 
 const tagline = ["Look at the evidence.", "Then examine the answer."];
 
-const streamPaths = Array.from({ length: 15 }, (_, index) => {
-  const lane = index - 7;
-  return `M 930 ${106 + lane * 13}
-    C 655 ${98 + lane * 9}, 485 ${160 + lane * 6}, 345 ${275 + lane * 3}
-    S 192 ${394 + lane * 1.5}, 286 ${426 + lane * 4}
-    S 665 ${466 + lane * 9}, 930 ${531 + lane * 12}`;
-});
-
-const pagePaths = Array.from({ length: 9 }, (_, index) => {
-  const lane = index - 4;
-  return `M ${845 + lane * 14} 0
-    C ${982 + lane * 14} 84, ${966 + lane * 14} 190, ${760 + lane * 12} 250
-    S ${155 + lane * 10} 360, ${115 + lane * 12} 465
-    S ${410 + lane * 10} 575, ${744 + lane * 12} 647
-    S ${991 + lane * 13} 787, ${807 + lane * 14} 869
-    S ${195 + lane * 12} 960, ${68 + lane * 13} 1000`;
-});
-
-function PageStream() {
-  return (
-    <svg className="cv-page-stream" viewBox="0 0 1000 1000" preserveAspectRatio="none"
-      aria-hidden="true" focusable="false">
-      {pagePaths.map((path, index) => (
-        <g key={path} style={{ "--cv-lane": index } as CSSProperties}>
-          <path className="cv-page-stream-bed" d={path} pathLength="100" />
-          <path className="cv-page-stream-thread" d={path} pathLength="100" />
-          <path className="cv-page-stream-pulse" d={path} pathLength="100" />
-        </g>
-      ))}
-    </svg>
-  );
-}
-
 function EvidenceStream() {
   return (
     <div className="cv-stream-stage">
-      <svg className="cv-stream-art" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid slice"
-        aria-hidden="true" focusable="false">
-        {streamPaths.map((path, index) => (
-          <g key={path} style={{ "--cv-lane": index } as CSSProperties}>
-            <path className="cv-stream-line" d={path} pathLength="100" />
-            <path className="cv-stream-pulse" d={path} pathLength="100" />
-          </g>
-        ))}
-      </svg>
 
       <details className="cv-workflow" open>
         <summary>
@@ -98,44 +56,6 @@ export default function OverviewPage({ onNavigate }: Props) {
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    const body = page.current?.querySelector<HTMLElement>(".cv-depth-body");
-    if (!body) return;
-    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let frame: number | undefined;
-
-    function draw() {
-      frame = undefined;
-      if (!body) return;
-      if (motion.matches) {
-        body.style.removeProperty("--cv-stream-progress");
-        return;
-      }
-      const { top, height } = body.getBoundingClientRect();
-      const readingLine = window.innerHeight * 0.76;
-      const progress = Math.max(0, Math.min(100, (readingLine - top) / Math.max(1, height) * 100));
-      body.style.setProperty("--cv-stream-progress", progress.toFixed(2));
-    }
-
-    function schedule() {
-      if (frame === undefined) frame = window.requestAnimationFrame(draw);
-    }
-
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
-    motion.addEventListener("change", schedule);
-    const resize = "ResizeObserver" in window ? new ResizeObserver(schedule) : null;
-    resize?.observe(body);
-    draw();
-
-    return () => {
-      if (frame !== undefined) window.cancelAnimationFrame(frame);
-      resize?.disconnect();
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
-      motion.removeEventListener("change", schedule);
-    };
-  }, []);
 
   return (
     <div className="cv-overview" ref={page}>
@@ -157,7 +77,6 @@ export default function OverviewPage({ onNavigate }: Props) {
       </section>
 
       <div className="cv-depth-body">
-        <PageStream />
         <section className="cv-section" aria-labelledby="input-title">
           <header data-cv-reveal>
             <p className="cv-caption">Demonstration modes</p>
